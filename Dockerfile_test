@@ -4,11 +4,10 @@
 
 FROM ubuntu:focal
 
-ENV \
-    NODE_ENV="test" \
-    DEBIAN_FRONTEND=noninteractive
+ENV NODE_ENV="production"
 
 RUN set -ex; \
+    export DEBIAN_FRONTEND=noninteractive; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
       ca-certificates \

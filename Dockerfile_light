@@ -3,10 +3,10 @@ FROM ubuntu:focal
 ENV \
     NODE_ENV="production" \
     CHOKIDAR_USEPOLLING=1 \
-    CHOKIDAR_INTERVAL=500 \
-    DEBIAN_FRONTEND=noninteractive
+    CHOKIDAR_INTERVAL=500
 
 RUN set -ex; \
+    export DEBIAN_FRONTEND=noninteractive; \
     groupadd -r node; \
     useradd -r -g node node; \
     apt-get -qq update; \

@@ -1,10 +1,9 @@
 FROM ubuntu:focal AS builder
 
-ENV \
-    NODE_ENV="production" \
-    DEBIAN_FRONTEND=noninteractive
+ENV NODE_ENV="production"
 
 RUN set -ex; \
+    export DEBIAN_FRONTEND=noninteractive; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
       ca-certificates \
@@ -25,10 +24,10 @@ FROM ubuntu:focal AS final
 ENV \
     NODE_ENV="production" \
     CHOKIDAR_USEPOLLING=1 \
-    CHOKIDAR_INTERVAL=500 \
-    DEBIAN_FRONTEND=noninteractive
+    CHOKIDAR_INTERVAL=500
 
 RUN set -ex; \
+    export DEBIAN_FRONTEND=noninteractive; \
     groupadd -r node; \
     useradd -r -g node node; \
     apt-get -qq update; \
