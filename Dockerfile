@@ -1,31 +1,38 @@
 FROM ubuntu:focal AS builder
 
-RUN export DEBIAN_FRONTEND=noninteractive \
-  && apt-get -qq update \
-  && apt-get -y --no-install-recommends install \
+ENV \
+    NODE_ENV="production" \
+    DEBIAN_FRONTEND=noninteractive
+
+RUN set -ex; \
+    apt-get -qq update; \
+    apt-get -y --no-install-recommends install \
       ca-certificates \
-      wget \
-  && apt-get -y --purge autoremove \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+      wget; \
+    wget -qO- https://deb.nodesource.com/setup_16.x | bash; \
+    apt-get install -y nodejs; \
+    apt-get -y remove wget; \
+    apt-get -y --purge autoremove; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*;
   
-RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash
-RUN apt-get install -y nodejs
-
 COPY . /usr/src/app
-
-ENV NODE_ENV="production"
 
 RUN cd /usr/src/app && npm install --production
 
-
 FROM ubuntu:focal AS final
 
-RUN groupadd -r node && useradd -r -g node node
+ENV \
+    NODE_ENV="production" \
+    CHOKIDAR_USEPOLLING=1 \
+    CHOKIDAR_INTERVAL=500 \
+    DEBIAN_FRONTEND=noninteractive
 
-RUN export DEBIAN_FRONTEND=noninteractive \
-  && apt-get -qq update \
-  && apt-get -y --no-install-recommends install \
+RUN set -ex; \
+    groupadd -r node; \
+    useradd -r -g node node; \
+    apt-get -qq update; \
+    apt-get -y --no-install-recommends install \
       ca-certificates \
       wget \
       pkg-config \
@@ -34,20 +41,15 @@ RUN export DEBIAN_FRONTEND=noninteractive \
       libuv1-dev \
       libjpeg-turbo8 \
       libicu66 \
-      unzip \
-      libcurl4-openssl-dev \
-  && apt-get -y --purge autoremove \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash
-RUN apt-get install -y nodejs
+      libcurl4-openssl-dev; \
+    wget -qO- https://deb.nodesource.com/setup_16.x | bash; \
+    apt-get install -y nodejs; \
+    apt-get -y remove wget; \
+    apt-get -y --purge autoremove; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*;
 
 COPY --from=builder /usr/src/app /app
-
-ENV NODE_ENV="production"
-ENV CHOKIDAR_USEPOLLING=1
-ENV CHOKIDAR_INTERVAL=500
 
 VOLUME /data
 WORKDIR /data

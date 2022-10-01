@@ -4,9 +4,14 @@
 
 FROM ubuntu:focal
 
-RUN apt-get -qq update \
-&& DEBIAN_FRONTEND=noninteractive apt-get -y install \
-      ca-certificates \	
+ENV \
+    NODE_ENV="test" \
+    DEBIAN_FRONTEND=noninteractive
+
+RUN set -ex; \
+    apt-get -qq update; \
+    apt-get -y --no-install-recommends install \
+      ca-certificates \
       wget \
       pkg-config \
       xvfb \
@@ -15,19 +20,16 @@ RUN apt-get -qq update \
       libjpeg-turbo8 \
       libicu66 \
       unzip \
-      libcurl4-openssl-dev \
-&& apt-get clean
-
-RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash
-RUN apt-get install -y nodejs
+      libcurl4-openssl-dev; \
+    wget -qO- https://deb.nodesource.com/setup_16.x | bash; \
+    apt-get install -y nodejs; \
+    apt-get clean;
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-RUN wget -O test_data.zip https://github.com/maptiler/tileserver-gl/releases/download/v1.3.0/test_data.zip
-RUN unzip -q test_data.zip -d test_data
-
-ENV NODE_ENV="test"
+RUN wget -O test_data.zip https://github.com/maptiler/tileserver-gl/releases/download/v1.3.0/test_data.zip; \
+    unzip -q test_data.zip -d test_data
 
 COPY package.json .
 RUN npm install
