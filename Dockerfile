@@ -1,20 +1,16 @@
-FROM node:16-bullseye AS builder
+FROM ubuntu:focal AS builder
 
 RUN export DEBIAN_FRONTEND=noninteractive \
   && apt-get -qq update \
   && apt-get -y --no-install-recommends install \
-      apt-transport-https \
-      curl \
-      unzip \
-      build-essential \
-      python \
-      libcairo2-dev \
-      libgles2-mesa-dev \
-      libgbm-dev \
-      libprotobuf-dev \
+      ca-certificates \
+      wget \
   && apt-get -y --purge autoremove \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
+  
+RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get install -y nodejs
 
 COPY . /usr/src/app
 
@@ -23,29 +19,29 @@ ENV NODE_ENV="production"
 RUN cd /usr/src/app && npm install --production
 
 
-FROM node:16-bullseye-slim AS final
+FROM ubuntu:focal AS final
+
+RUN groupadd -r node && useradd -r -g node node
 
 RUN export DEBIAN_FRONTEND=noninteractive \
   && apt-get -qq update \
   && apt-get -y --no-install-recommends install \
-      libgles2-mesa \
-      libegl1 \
+      ca-certificates \
+      wget \
+      pkg-config \
       xvfb \
-      xauth \
-      libopengl0 \
-      libcurl4 \
-      curl \
+      libglfw3-dev \
       libuv1-dev \
-      libc6-dev \
-      libcap2-bin \
+      libjpeg-turbo8 \
+      libicu66 \
+      unzip \
+      libcurl4-openssl-dev \
   && apt-get -y --purge autoremove \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
-  
-RUN curl http://archive.ubuntu.com/ubuntu/pool/main/libj/libjpeg-turbo/libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb --output libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb
-RUN apt install ./libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb
-RUN curl http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2_amd64.deb --output libicu66_66.1-2ubuntu2_amd64.deb
-RUN apt install ./libicu66_66.1-2ubuntu2_amd64.deb
+
+RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get install -y nodejs
 
 COPY --from=builder /usr/src/app /app
 

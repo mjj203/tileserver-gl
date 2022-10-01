@@ -2,24 +2,24 @@
 # Simply run "docker build -f Dockerfile_test ."
 # WARNING: sometimes it fails with a core dumped exception
 
-FROM node:16-bullseye
+FROM ubuntu:focal
 
 RUN apt-get -qq update \
 && DEBIAN_FRONTEND=noninteractive apt-get -y install \
-    apt-transport-https \
-    curl \
-    unzip \
-    build-essential \
-    python \
-    libcairo2-dev \
-    libgles2-mesa-dev \
-    libgbm-dev \
-    libllvm3.9 \
-    libprotobuf-dev \
-    libxxf86vm-dev \
-    libopengl0 \
-    xvfb \
+      ca-certificates \	
+      wget \
+      pkg-config \
+      xvfb \
+      libglfw3-dev \
+      libuv1-dev \
+      libjpeg-turbo8 \
+      libicu66 \
+      unzip \
+      libcurl4-openssl-dev \
 && apt-get clean
+
+RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get install -y nodejs
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -31,5 +31,6 @@ ENV NODE_ENV="test"
 
 COPY package.json .
 RUN npm install
-COPY / .
+COPY . .
+RUN ls
 RUN xvfb-run --server-args="-screen 0 1024x768x24" npm test

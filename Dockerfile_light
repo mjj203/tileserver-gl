@@ -1,4 +1,17 @@
-FROM node:16-bullseye
+FROM ubuntu:focal
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+  && apt-get -qq update \
+  && apt-get -y --no-install-recommends install \
+      ca-certificates \
+      wget \
+  && apt-get -y --purge autoremove \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+  
+RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get install -y nodejs
+RUN groupadd -r node && useradd -r -g node node
 
 ENV NODE_ENV="production"
 ENV CHOKIDAR_USEPOLLING=1
@@ -12,3 +25,4 @@ RUN mkdir -p /usr/src/app
 COPY / /usr/src/app
 RUN cd /usr/src/app && npm install --production
 RUN ["chmod", "+x", "/usr/src/app/docker-entrypoint.sh"]
+USER node:node
