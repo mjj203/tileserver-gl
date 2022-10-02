@@ -10,6 +10,7 @@ RUN set -ex; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
+      unzip \
       build-essential \
       ca-certificates \
       wget \
