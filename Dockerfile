@@ -4,8 +4,6 @@ ENV NODE_ENV="production"
 
 RUN set -ex; \
     export DEBIAN_FRONTEND=noninteractive; \
-    groupadd -r node; \
-    useradd -r -g node node; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
       build-essential \
