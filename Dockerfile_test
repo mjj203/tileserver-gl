@@ -10,6 +10,8 @@ RUN set -ex; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
+      unzip \
+      build-essential \
       ca-certificates \
       wget \
       pkg-config \
@@ -18,8 +20,13 @@ RUN set -ex; \
       libuv1-dev \
       libjpeg-turbo8 \
       libicu66 \
-      unzip \
-      libcurl4-openssl-dev; \
+      libcairo2-dev \
+      libpango1.0-dev \
+      libjpeg-dev \
+      libgif-dev \
+      librsvg2-dev \
+      libcurl4-openssl-dev \
+      libpixman-1-dev; \
     wget -qO- https://deb.nodesource.com/setup_16.x | bash; \
     apt-get install -y nodejs; \
     apt-get clean;
