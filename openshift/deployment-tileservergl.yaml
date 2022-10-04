@@ -1,0 +1,33 @@
+﻿kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: tileserver
+  namespace: $namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tileserver
+  template:
+    metadata:
+      labels:
+        app: tileserver
+    spec:
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+      containers:
+        - resources: {}
+          name: rbt-tileservergl
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: cache
+              mountPath: /.cache
+          image: >-
+            $registry/tileserver-gl:latest
