@@ -12,3 +12,5 @@ docs/*
 test/*
 test/
 docker-entrypoint_light.sh
+openshift/
+openshift/*
