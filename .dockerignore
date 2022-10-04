@@ -1,6 +1,8 @@
-*
-!src
-!public
-!package.json
-!package-lock.json
-!docker-entrypoint.sh
+Dockerfile
+.dockerignore
+.git/
+.git/*
+.gitignore
+LICENSE.md
+README.md
+.travis.yml
