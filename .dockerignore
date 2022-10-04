@@ -1,8 +1,14 @@
-Dockerfile
+Dockerfile*
 .dockerignore
 .git/
 .git/*
 .gitignore
-LICENSE.md
-README.md
+*.md
 .travis.yml
+.github/
+.github/*
+docs/
+docs/*
+test/*
+test/
+docker-entrypoint_light.sh
