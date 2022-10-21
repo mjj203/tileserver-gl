@@ -6,8 +6,14 @@ RUN set -ex; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
-      build-essential \
       ca-certificates \
+      build-essential \
+      ccache \
+      cmake \
+      g++-10 \
+      libc++-9-dev \
+      libc++abi-9-dev \
+      ninja-build \
       wget \
       pkg-config \
       xvfb \
