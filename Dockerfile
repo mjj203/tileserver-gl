@@ -6,8 +6,14 @@ RUN set -ex; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
-      build-essential \
       ca-certificates \
+      build-essential \
+      ccache \
+      cmake \
+      g++-10 \
+      libc++-9-dev \
+      libc++abi-9-dev \
+      ninja-build \
       wget \
       pkg-config \
       xvfb \
@@ -30,9 +36,9 @@ RUN set -ex; \
     rm -rf /var/lib/apt/lists/*;
 
 RUN mkdir -p /usr/src/app
-COPY package.json /usr/src/app
+COPY package* /usr/src/app/
 
-RUN cd /usr/src/app && npm install --production
+RUN cd /usr/src/app && npm install --omit=dev
 
 FROM ubuntu:focal AS final
 

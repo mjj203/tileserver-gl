@@ -25,7 +25,32 @@ jobs:
         run: sudo apt update -qq
       - 
         name: Install apt packages
-        run: sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++ xvfb libgles2-mesa-dev libgbm-dev libxxf86vm-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            unzip \
+            ca-certificates \
+            build-essential \
+            ccache \
+            cmake \
+            g++-10 \
+            libc++-9-dev \
+            libc++abi-9-dev \
+            ninja-build \
+            wget \
+            pkg-config \
+            xvfb \
+            libglfw3-dev \
+            libuv1-dev \
+            libjpeg-turbo8 \
+            libicu66 \
+            libcairo2-dev \
+            libpango1.0-dev \
+            libjpeg-dev \
+            libgif-dev \
+            librsvg2-dev \
+            libcurl4-openssl-dev \
+            libpixman-1-dev
       -
         name: Install node dependencies
         run: npm install
