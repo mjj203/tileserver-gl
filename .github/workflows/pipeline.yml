@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - master
-      - build/add-ci-workflow
   pull_request:
     branches:
       - master
-      - build/add-ci-workflow
 
 concurrency:
   group: ci-${{ github.ref }}-1
@@ -28,15 +26,15 @@ jobs:
     name: 'CI'
     needs:
       - extract-branch
-    uses: vinayakkulkarni/tileserver-gl/.github/workflows/ci.yml@build/add-ci-workflow
+    uses: maptiler/tileserver-gl/.github/workflows/ci.yml@master
   automerger:
     name: 'Auto Merge Bot PRs'
     needs:
       - ci
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' }}
-    uses: vinayakkulkarni/tileserver-gl/.github/workflows/automerger.yml@build/add-ci-workflow
+    uses: maptiler/tileserver-gl/.github/workflows/automerger.yml@master
   ct:
     name: 'CT'
     needs:
       - extract-branch
-    uses: vinayakkulkarni/tileserver-gl/.github/workflows/ct.yml@build/add-ci-workflow
+    uses: maptiler/tileserver-gl/.github/workflows/ct.yml@master
