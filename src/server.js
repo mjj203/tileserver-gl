@@ -487,10 +487,6 @@ export function server(opts) {
     console.log('Stopping server and reloading config');
 
     running.server.shutdown(() => {
-      for (const key in require.cache) {
-        delete require.cache[key];
-      }
-
       const restarted = start(opts);
       running.server = restarted.server;
       running.app = restarted.app;
