@@ -1,8 +1,20 @@
 name: "Build, Test, Version, Publish"
 
-on:
-  push:
-    branches: [ main ]
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Choose a release type
+        required: true
+        type: choice
+        options:
+          - prerelease
+          - prepatch
+          - preminor
+          - premajor
+          - patch
+          - minor
+          - major
 
 jobs:
   release:
@@ -10,129 +22,98 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      -
-        name: "Checkout source code"
+      - name: "Checkout source code"
         uses: "actions/checkout@v3.1.0"
         with:
           ref: ${{ github.ref }}
-      -
-        name: Set up node
+          token: ${{ secrets.TSPAT }}
+
+      - name: Set up node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-      -
-        name: Update packages
-        run: sudo apt update -qq
-      - 
-        name: Install apt packages
+          node-version: 16
+
+      - name: npm version
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            unzip \
-            ca-certificates \
-            build-essential \
-            ccache \
-            cmake \
-            g++-10 \
-            libc++-9-dev \
-            libc++abi-9-dev \
-            ninja-build \
-            wget \
-            pkg-config \
-            xvfb \
-            libglfw3-dev \
-            libuv1-dev \
-            libjpeg-turbo8 \
-            libicu66 \
-            libcairo2-dev \
-            libpango1.0-dev \
-            libjpeg-dev \
-            libgif-dev \
-            librsvg2-dev \
-            libcurl4-openssl-dev \
-            libpixman-1-dev
-      -
-        name: Install node dependencies
+          echo "NPM_VERSION=$(npm version ${{ github.event.inputs.version }} --preid pre --no-git-tag-version)" >> $GITHUB_ENV
+
+      - name: Push version to git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -a -m "Update node version to ${{ env.NPM_VERSION }} (${{ github.event.inputs.version }})"
+          git push
+
+      - name: Update packages
+        run: sudo apt update -qq
+
+      - name: Install apt packages
+        run: sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++ xvfb libgles2-mesa-dev libgbm-dev libxxf86vm-dev
+
+      - name: Install node dependencies
         run: npm install
-      - 
-        name: Download test data
+
+      - name: Download test data
         run: wget -O test_data.zip https://github.com/acalcutt/tileserver-gl/releases/download/test_data/test_data.zip
-      -
-        name: Unzip test data
+
+      - name: Unzip test data
         run: unzip -q test_data.zip -d test_data
-      -
-        name: Run tests
+
+      - name: Run tests
         run: xvfb-run --server-args="-screen 0 1024x768x24" npm test
-      -
-        name: Remove Test Data
+
+      - name: Remove Test Data
         run: rm -R test_data*
-      -
-        name: "Old Version Number"
-        run: cat package.json | grep version
-      -
-        name: "Automated Version Bump"
-        id: version-bump
-        uses: "phips28/gh-action-bump-version@master"
-        with:
-          tag-prefix: 'v'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      -
-        name: "New Version Number"
-        run: cat package.json | grep version
-      - 
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: 'arm64'
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      -
-        name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and publish Full Version to Docker Hub
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: wifidb/tileserver-gl:latest, wifidb/tileserver-gl:${{steps.version-bump.outputs.newTag}}
-          platforms: linux/arm64,linux/amd64
-      -
-        name: Publish to Full Version NPM
+
+      - name: Publish to Full Version NPM
         run: |
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
           npm publish --access public
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ github.event.inputs.npm_token }}
 
-      -
-        name: Create Tileserver Light Directory
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'arm64'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and publish Full Version to Docker Hub
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: wifidb/tileserver-gl:latest, wifidb/tileserver-gl:${{env.NPM_VERSION}}
+          platforms: linux/arm64,linux/amd64
+
+      - name: Create Tileserver Light Directory
         run: node publish.js --no-publish
- 
-      -
-        name: Install node dependencies
+
+      - name: Install node dependencies
         run: npm install
         working-directory: ./light
- 
-      -
-        name: Build and publish Light Version to Docker Hub
+
+      - name: Publish to Light Version NPM
+        working-directory: ./light
+        run: |
+          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+          npm publish --access public
+        env:
+          NPM_TOKEN: ${{ github.event.inputs.npm_token }}
+
+      - name: Build and publish Light Version to Docker Hub
         uses: docker/build-push-action@v3
         with:
           context: ./light
           file: ./light/Dockerfile
           push: true
-          tags: wifidb/tileserver-gl-light:latest, wifidb/tileserver-gl-light:${{steps.version-bump.outputs.newTag}}
+          tags: wifidb/tileserver-gl-light:latest, wifidb/tileserver-gl-light:${{env.NPM_VERSION}}
           platforms: linux/arm64,linux/amd64
-      -
-        name: Publish to Light Version NPM
-        working-directory: ./light
-        run: |
-          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          npm publish --access public
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
