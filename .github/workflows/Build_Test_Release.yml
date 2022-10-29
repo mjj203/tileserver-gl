@@ -70,7 +70,7 @@ jobs:
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
           npm publish --access public
         env:
-          NPM_TOKEN: ${{ github.event.inputs.npm_token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -107,7 +107,7 @@ jobs:
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
           npm publish --access public
         env:
-          NPM_TOKEN: ${{ github.event.inputs.npm_token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN  }}
 
       - name: Build and publish Light Version to Docker Hub
         uses: docker/build-push-action@v3
