@@ -23,7 +23,7 @@ RUN set -ex; \
       gir1.2-rsvg-2.0=2.48.2-1 \
       librsvg2-2=2.48.2-1 \
       librsvg2-common=2.48.2-1 \
-      libcurl4-openssl-dev=7.68.0-1ubuntu2.13 \
+      libcurl4-openssl-dev=7.68.0-1ubuntu2.14 \
       libpixman-1-dev=0.38.4-0ubuntu1; \
       apt-get -y --purge autoremove; \
       apt-get clean; \
@@ -70,7 +70,7 @@ RUN set -ex; \
       libgif7=5.1.9-1 \
       libopengl0=1.3.2-1~ubuntu0.20.04.2 \
       libpixman-1-0=0.38.4-0ubuntu1 \
-      libcurl4=7.68.0-1ubuntu2.13 \
+      libcurl4=7.68.0-1ubuntu2.14 \
       librsvg2-2=2.48.2-1 \
       libpango-1.0-0=1.44.7-2ubuntu4; \
       apt-get -y --purge autoremove; \
