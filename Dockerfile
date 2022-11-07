@@ -72,6 +72,7 @@ COPY --from=builder /usr/src/app /usr/src/app
 
 COPY . /usr/src/app
 
+RUN mkdir -p /data && chown node:node /data
 VOLUME /data
 WORKDIR /data
 
@@ -80,3 +81,5 @@ EXPOSE 80
 USER node:node
 
 ENTRYPOINT ["/usr/src/app/docker-entrypoint.sh"]
+
+HEALTHCHECK CMD node /usr/src/app/src/healthcheck.js
