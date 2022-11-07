@@ -68,9 +68,6 @@ Static images
     * can be provided multiple times
 
   * ``padding`` - "percentage" padding for fitted endpoints (area-based and path autofit)
-  * ``marker=center`` - set a marker at the center of the map
-  * ``marker={lng},{lat}`` - set a marker at this location
-  * ``markers={lng},{lat}|{lng},{lat}|...`` - set several markers at given locations (same pattern as for ``path`` coordinates)
 
     * value of ``0.1`` means "add 10% size to each side to make sure the area of interest is nicely visible"
 
