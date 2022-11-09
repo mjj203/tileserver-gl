@@ -71,6 +71,10 @@
   "engines": {
     "node": ">=14.15.0 <17"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "repository": {
     "url": "git+https://github.com/maptiler/tileserver-gl.git",
     "type": "git"
