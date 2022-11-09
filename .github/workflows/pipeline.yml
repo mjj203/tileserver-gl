@@ -38,3 +38,14 @@ jobs:
     needs:
       - extract-branch
     uses: maptiler/tileserver-gl/.github/workflows/ct.yml@master
+  builder:
+    name: 'Build, Publish & Release'
+    needs:
+      - extract-branch
+      - ci
+      - ct
+    uses: maptiler/tileserver-gl/.github/workflows/builder.yml@master
+    secrets:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+      NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
