@@ -27,7 +27,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Install dependencies 🚀
-        run: npm i --prefer-offline --no-audit --omit=optional
+        run: npm ci --prefer-offline --no-audit --omit=optional
 
       - name: Run linter(s) 💅
         uses: wearerequired/lint-action@v2
