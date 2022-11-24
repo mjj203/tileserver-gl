@@ -26,25 +26,25 @@ jobs:
     name: 'CI'
     needs:
       - extract-branch
-    uses: acalcutt/tileserver-gl/.github/workflows/ci.yml@main
+    uses: maptiler/tileserver-gl/.github/workflows/ci.yml@main
   automerger:
     name: 'Auto Merge Bot PRs'
     needs:
       - ci
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' }}
-    uses: acalcutt/tileserver-gl/.github/workflows/automerger.yml@main
+    uses: maptiler/tileserver-gl/.github/workflows/automerger.yml@main
   ct:
     name: 'CT'
     needs:
       - extract-branch
-    uses: acalcutt/tileserver-gl/.github/workflows/ct.yml@main
+    uses: maptiler/tileserver-gl/.github/workflows/ct.yml@main
   builder:
     name: 'Build, Publish & Release'
     needs:
       - extract-branch
       - ci
       - ct
-    uses: acalcutt/tileserver-gl/.github/workflows/builder.yml@main
+    uses: maptiler/tileserver-gl/.github/workflows/builder.yml@main
     secrets:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
