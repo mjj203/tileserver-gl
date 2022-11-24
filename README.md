@@ -45,7 +45,7 @@ An alternative to npm to start the packed software easier is to install [Docker]
 Example using a mbtiles file
 ```bash
 wget https://github.com/acalcutt/tileserver-gl/releases/download/test_data/zurich_switzerland.mbtiles
-docker run --rm -it -v $(pwd):/data -p 8080:80 wifidb/tileserver-gl --mbtiles zurich_switzerland.mbtiles
+docker run --rm -it -v $(pwd):/data -p 8080:8080 wifidb/tileserver-gl --mbtiles zurich_switzerland.mbtiles
 [in your browser, visit http://[server ip]:8080]
 ```
 
@@ -53,13 +53,13 @@ Example using a config.json + style + mbtiles file
 ```bash
 wget https://github.com/acalcutt/tileserver-gl/releases/download/test_data/test_data.zip
 unzip test_data.zip
-docker run --rm -it -v $(pwd):/data -p 8080:80 wifidb/tileserver-gl
+docker run --rm -it -v $(pwd):/data -p 8080:8080 wifidb/tileserver-gl
 [in your browser, visit http://[server ip]:8080]
 ```
 
 Example using a different path
 ```bash
-docker run --rm -it -v /your/local/config/path:/data -p 8080:80 wifidb/tileserver-gl
+docker run --rm -it -v /your/local/config/path:/data -p 8080:8080 wifidb/tileserver-gl
 ```
 replace '/your/local/config/path' with the path to your config file
 
