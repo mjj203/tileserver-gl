@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   ct:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install dependencies (Ubuntu)
         run: |-
@@ -48,7 +48,7 @@ jobs:
         run: >-
           sudo apt-get install -qq libcairo2-dev libjpeg8-dev libpango1.0-dev
           libgif-dev build-essential g++ xvfb libgles2-mesa-dev libgbm-dev
-          libxxf86vm-dev libicu66
+          libxxf86vm-dev
 
       - name: Pull test data 📦
         run: >-
