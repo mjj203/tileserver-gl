@@ -40,7 +40,7 @@ RUN set -ex; \
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . .
-RUN npm install -g npm && npm ci --omit=dev
+RUN npm install -g npm && npm install --omit=dev
 
 FROM ubuntu:focal AS final
 
@@ -52,9 +52,7 @@ RUN groupadd --gid 1001 node \
     && useradd --uid 1001 --gid node  --shell /bin/bash --create-home node \
     && set -ex; \
     export DEBIAN_FRONTEND=noninteractive; \
-    groupadd -r node; \
-    useradd -r -g node node; \
-    apt-get -qq update && apt-get upgrade -y \
+    apt-get -qq update && apt-get upgrade -y; \
     apt-get -y --no-install-recommends install \
       ca-certificates \
       libgles2-mesa \
@@ -77,15 +75,15 @@ RUN groupadd --gid 1001 node \
       libpixman-1-0 \
       libcurl4 \
       librsvg2-2 \
-      libpango1.0 \
-    && update-ca-certificates \
-    && wget -qO- https://deb.nodesource.com/setup_16.x | bash; \
+      libpango1.0; \
+    update-ca-certificates; \
+    wget -qO- https://deb.nodesource.com/setup_16.x | bash; \
     apt-get install -y nodejs; \
     apt-get -y remove wget; \
     apt-get -y --purge autoremove; \
     apt-get clean; \
-    rm -rf /var/lib/apt/lists/* \
-    && npm install -g npm
+    npm install -g npm; \
+    rm -rf /var/lib/apt/lists/* 
 
 COPY --from=builder /usr/src/app /usr/src/app
 
