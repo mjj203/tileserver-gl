@@ -4,15 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{name}} - TileServer GL</title>
-  <script>
-    ;(function(d, s, c) {
-      var j = d.createElement(s),
-        t = d.getElementsByTagName(s)[0]
-      j.src = '/elastic-apm-rum.umd.min.js'
-      j.onload = function() {elasticApm.init(c)}
-      t.parentNode.insertBefore(j, t)
-    })(document, 'script', {serviceName: 'RBT-TileserverGL', serverUrl: 'http://10.232.234.20:8200', serviceVersion: '5.2.0', logLevel: 'info', breakdownMetrics: 'true', pageLoadTraceId: '${transaction.traceId}', pageLoadSpanId: '${transaction.ensureParentId()}', pageLoadSampled: '${transaction.sampled}'})
-  </script>
   <link rel="stylesheet" type="text/css" href="{{public_url}}maplibre-gl.css{{&key_query}}" />
   <link rel="stylesheet" type="text/css" href="{{public_url}}maplibre-gl-inspect.css{{&key_query}}" />
   <link rel="stylesheet" type="text/css" href="{{public_url}}leaflet.css{{&key_query}}" />

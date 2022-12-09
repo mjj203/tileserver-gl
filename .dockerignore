@@ -4,3 +4,4 @@
 !test
 !package.json
 !docker-entrypoint.sh
+!.env
