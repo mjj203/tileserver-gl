@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
 'use strict';
-
+//import elasticapm from 'elastic-apm-node';
+//const apm = elasticapm.start({
+//        serviceName: 'RBT-TileserverGL',
+//        serverUrl: 'http://10.232.234.20:8200'
+//})
 import fs from 'node:fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
