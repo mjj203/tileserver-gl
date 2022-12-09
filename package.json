@@ -40,6 +40,7 @@
     "request": "2.88.2",
     "sharp": "0.31.2",
     "tileserver-gl-styles": "2.0.0",
+    "elastic-apm-node": "3.40.1",
     "sanitize-filename": "1.6.3"
   },
   "devDependencies": {

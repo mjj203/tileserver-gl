@@ -1048,7 +1048,7 @@ export const serve_rendered = {
             bbox[3] = Math.max(bbox[3], pair[1]);
           }
 
-          const bbox_ = mercator.convert(bbox, '900913');
+          const bbox_ = mercator.convert(bbox, '3395');
           const center = mercator.inverse([
             (bbox_[0] + bbox_[2]) / 2,
             (bbox_[1] + bbox_[3]) / 2,
@@ -1360,10 +1360,10 @@ export const serve_rendered = {
 
                 if (!repoobj.dataProjWGStoInternalWGS && info.proj4) {
                   // how to do this for multiple sources with different proj4 defs?
-                  const to3857 = proj4('EPSG:3857');
+                  const to3395 = proj4('EPSG:3395');
                   const toDataProj = proj4(info.proj4);
                   repoobj.dataProjWGStoInternalWGS = (xy) =>
-                    to3857.inverse(toDataProj.forward(xy));
+                    to3395.inverse(toDataProj.forward(xy));
                 }
 
                 const type = source.type;
