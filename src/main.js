@@ -2,10 +2,9 @@
 
 'use strict';
 import elasticapm from 'elastic-apm-node';
-const APM_URL = process.env.APM_URL;
 const apm = elasticapm.start({
         serviceName: 'RBT-TileserverGL',
-        serverUrl: '${APM_URL}'
+        serverUrl: 'http://10.232.234.20:8200'
 })
 import fs from 'node:fs';
 import path from 'path';
