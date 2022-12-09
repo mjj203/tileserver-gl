@@ -1,25 +1,6 @@
 #!/usr/bin/env node
 
 'use strict';
-const apmUrl = process.env.APM_URL
-import { init as initApm } from '@elastic/apm-rum'
-const rum = initApm({
-  serviceName: 'RBT-TileserverGL',
-  serverUrl: '${apmUrl}',
-  serviceVersion: '5.2.0',
-  breakdownMetrics: true,
-  logLevel: 'debug'
-})
-import elasticapm from 'elastic-apm-node';
-const apm = elasticapm.start({
-  serviceName: 'RBT-TileserverGL',
-  serverUrl: '${apmUrl}',
-  serviceVersion: '5.2.0',
-  captureBody: 'all',
-  errorOnAbortedRequests: true,
-  logLevel: 'debug',
-  logUncaughtExceptions: true
-})
 import fs from 'node:fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

@@ -27,6 +27,16 @@
     #map { position:absolute; top:0; bottom:0; width:100%; }
   </style>
   {{/is_vector}}
+  <script src="/elastic-apm-rum.umd.min.js" ></script>
+  <script>
+    elasticApm.init({
+          serviceName: 'RBT-TileserverGL',
+          serverUrl: 'http://10.232.234.20:8200',
+          serviceVersion: '5.2.0',
+          logLevel: 'info',
+          breakdownMetrics: 'true'
+   })
+  </script>
 </head>
 <body>
   {{#is_vector}}

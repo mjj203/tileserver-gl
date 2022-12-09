@@ -14,6 +14,16 @@
       return false;
     }
   </script>
+  <script src="/elastic-apm-rum.umd.min.js" ></script>
+  <script>
+    elasticApm.init({
+          serviceName: 'RBT-TileserverGL',
+          serverUrl: 'http://10.232.234.20:8200',
+          serviceVersion: '5.2.0',
+          logLevel: 'info',
+          breakdownMetrics: 'true'
+   })
+  </script>
 </head>
 <body>
   <section>
