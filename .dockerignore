@@ -3,5 +3,4 @@
 !public
 !test
 !package.json
-!package-lock.json
 !docker-entrypoint.sh
