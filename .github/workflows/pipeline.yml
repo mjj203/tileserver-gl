@@ -32,3 +32,12 @@ jobs:
     needs:
       - extract-branch
     uses: maptiler/tileserver-gl/.github/workflows/ct.yml@master
+  automerger:
+    name: 'Automerge Dependabot PRs'
+    needs:
+      - ci
+      - ct
+      - extract-branch
+    if: >
+      github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+    uses: maptiler/tileserver-gl/.github/workflows/ct.yml@master
