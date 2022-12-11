@@ -3,32 +3,30 @@ name: "Build, Test, Release"
 on: 
   workflow_dispatch:
     inputs:
-      docker_user:
-        description: 'Docker Username'     
+      version:
+        description: Choose a release type
         required: true
-      docker_token:
-        description: 'Docker Token'     
-        required: true
-      npm_token:
-        description: 'NPM Token'
-        required: true
+        type: choice
+        options:
+          - prerelease
+          - prepatch
+          - preminor
+          - premajor
+          - patch
+          - minor
+          - major
 
 jobs:
   release:
-    name: "Build, Test, Publish"
+    name: "Build, Test, Release"
     runs-on: ubuntu-20.04
+
     steps:
-      - name: Check out repository ✨
-        uses: actions/checkout@v3
-
-      - name: Update apt-get 🚀
-        run: sudo apt-get update -qq
-
-      - name: Install dependencies (Ubuntu) 🚀
-        run: >-
-          sudo apt-get install -qq libcairo2-dev libjpeg8-dev libpango1.0-dev
-          libgif-dev build-essential g++ xvfb libgles2-mesa-dev libgbm-dev
-          libxxf86vm-dev
+      - name: "Check out repository ✨"
+        uses: "actions/checkout@v3.1.0"
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.TSPAT }}
 
       - name: Setup node env 📦
         uses: actions/setup-node@v3
@@ -37,13 +35,31 @@ jobs:
           check-latest: true
           cache: 'npm'
 
-      - name: Install dependencies 🚀
-        run: npm ci --prefer-offline --no-audit --omit=optional
+      - name: npm version 
+        run: |
+          echo "NPM_VERSION=$(npm version ${{ github.event.inputs.version }} --preid pre --no-git-tag-version)" >> $GITHUB_ENV
+
+      - name: Push version to git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -a -m "Update TileServer version to ${{ env.NPM_VERSION }} (${{ github.event.inputs.version }})"
+          git push
+
+      - name: Update apt-get 🚀
+        run: sudo apt update -qq
+
+      - name: Install dependencies (Ubuntu) 🚀
+        run: >-
+          sudo apt-get install -qq libcairo2-dev libjpeg8-dev libpango1.0-dev
+          libgif-dev build-essential g++ xvfb libgles2-mesa-dev libgbm-dev
+          libxxf86vm-dev
+
+      - name: Install node dependencies
+        run: npm install
 
       - name: Pull test data 📦
-        run: >-
-          wget -O test_data.zip
-          https://github.com/maptiler/tileserver-gl/releases/download/v1.3.0/test_data.zip
+        run: wget -O test_data.zip https://github.com/acalcutt/tileserver-gl/releases/download/test_data/test_data.zip
 
       - name: Prepare test data 📦
         run: unzip -q test_data.zip -d test_data
@@ -59,11 +75,7 @@ jobs:
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
           npm publish --access public
         env:
-          NPM_TOKEN: ${{ github.event.inputs.npm_token }}
-
-      - name: Get version
-        run: |
-          echo "PACKAGE_VERSION=$(grep '"version"' package.json | cut -d '"' -f 4 | head -n 1)" >> $GITHUB_ENV
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -76,15 +88,15 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
-          username: ${{ github.event.inputs.docker_user }}
-          password: ${{ github.event.inputs.docker_token }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and publish Full Version to Docker Hub
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: maptiler/tileserver-gl:latest, maptiler/tileserver-gl:v${{ env.PACKAGE_VERSION }}
+          tags: wifidb/tileserver-gl:latest, wifidb/tileserver-gl:${{env.NPM_VERSION}}
           platforms: linux/arm64,linux/amd64
 
       - name: Create Tileserver Light Directory
@@ -100,7 +112,7 @@ jobs:
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
           npm publish --access public
         env:
-          NPM_TOKEN: ${{ github.event.inputs.npm_token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN  }}
 
       - name: Build and publish Light Version to Docker Hub
         uses: docker/build-push-action@v3
@@ -108,5 +120,5 @@ jobs:
           context: ./light
           file: ./light/Dockerfile
           push: true
-          tags: maptiler/tileserver-gl-light:latest, maptiler/tileserver-gl-light:v${{ env.PACKAGE_VERSION }}
+          tags: wifidb/tileserver-gl-light:latest, wifidb/tileserver-gl-light:${{env.NPM_VERSION}}
           platforms: linux/arm64,linux/amd64
