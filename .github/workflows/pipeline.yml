@@ -3,10 +3,10 @@ name: 'The Pipeline'
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 concurrency:
   group: ci-${{ github.ref }}-1
@@ -26,12 +26,12 @@ jobs:
     name: 'CI'
     needs:
       - extract-branch
-    uses: maptiler/tileserver-gl/.github/workflows/ci.yml@master
+    uses: acalcutt/tileserver-gl/.github/workflows/ci.yml@main
   ct:
     name: 'CT'
     needs:
       - extract-branch
-    uses: maptiler/tileserver-gl/.github/workflows/ct.yml@master
+    uses: acalcutt/tileserver-gl/.github/workflows/ct.yml@main
   automerger:
     name: 'Automerge Dependabot PRs'
     needs:
@@ -40,4 +40,4 @@ jobs:
       - extract-branch
     if: >
       github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
-    uses: maptiler/tileserver-gl/.github/workflows/ct.yml@master
+    uses: acalcutt/tileserver-gl/.github/workflows/ct.yml@main
