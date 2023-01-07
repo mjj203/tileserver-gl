@@ -1,4 +1,4 @@
-name: 'Continuous Testing'
+name: 'Continuous Integration'
 
 on:
   workflow_call:
@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  ct:
+  ci:
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository ✨ (non-dependabot)
@@ -21,15 +21,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Update apt-get 🚀
-        run: sudo apt-get update -qq
-
-      - name: Install dependencies (Ubuntu) 🚀
-        run: >-
-          sudo apt-get install -qq libcairo2-dev libjpeg8-dev libpango1.0-dev
-          libgif-dev build-essential g++ xvfb libgles2-mesa-dev libgbm-dev
-          libxxf86vm-dev
-
       - name: Setup node env 📦
         uses: actions/setup-node@v3
         with:
@@ -40,13 +31,21 @@ jobs:
       - name: Install dependencies 🚀
         run: npm ci --prefer-offline --no-audit --omit=optional
 
-      - name: Pull test data 📦
-        run: >-
-          wget -O test_data.zip
-          https://github.com/maptiler/tileserver-gl/releases/download/v1.3.0/test_data.zip
+      - name: Run linter(s) 💅
+        uses: wearerequired/lint-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          continue_on_error: false
+          git_name: github-actions[bot]
+          git_email: github-actions[bot]@users.noreply.github.com
+          auto_fix: false
+          eslint: true
+          eslint_extensions: js,cjs,mjs,ts
+          prettier: true
+          prettier_extensions: js,cjs,ts,json
 
-      - name: Prepare test data 📦
-        run: unzip -q test_data.zip -d test_data
-
-      - name: Run tests 🧪
-        run: xvfb-run --server-args="-screen 0 1024x768x24" npm test
+      - name: Run hadolint 🐳
+        uses: hadolint/hadolint-action@v3.0.0
+        with:
+          dockerfile: Dockerfile
+          ignore: DL3008,DL3015
