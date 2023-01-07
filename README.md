@@ -87,4 +87,3 @@ You can read full documentation of this project at https://tileserver-gl.readthe
 ## Alternative
 
 Discover MapTiler Server if you need a [map server with easy setup and user-friendly interface](https://www.maptiler.com/server/).
-
