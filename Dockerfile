@@ -7,10 +7,10 @@ RUN set -ex; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
       build-essential=12.8ubuntu1 \
-      ca-certificates=20211016~20.04.1 \
+      ca-certificates=20211016ubuntu0.20.04.1 \
       wget=1.20.3-1ubuntu1 \
       pkg-config=0.29.1-0ubuntu4 \
-      xvfb=2:1.20.13-1ubuntu1~20.04.4 \
+      xvfb=2:1.20.13-1ubuntu1~20.04.5 \
       libglfw3-dev=3.3.2-1 \
       libuv1-dev=1.34.2-1ubuntu1.3 \
       libjpeg-turbo8=2.0.3-0ubuntu1.20.04.3 \
@@ -23,9 +23,9 @@ RUN set -ex; \
       gir1.2-rsvg-2.0=2.48.2-1 \
       librsvg2-2=2.48.2-1 \
       librsvg2-common=2.48.2-1 \
-      libcurl4-openssl-dev=7.68.0-1ubuntu2.14 \
-      libpixman-1-dev=0.38.4-0ubuntu1 \
-      libpixman-1-0=0.38.4-0ubuntu1; \
+      libcurl4-openssl-dev=7.68.0-1ubuntu2.15 \
+      libpixman-1-dev=0.38.4-0ubuntu2.1 \
+      libpixman-1-0=0.38.4-0ubuntu2.1; \
       apt-get -y --purge autoremove; \
       apt-get clean; \
       rm -rf /var/lib/apt/lists/*;
@@ -60,9 +60,9 @@ RUN set -ex; \
     useradd -r -g node node; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
-      ca-certificates=20211016~20.04.1 \
+      ca-certificates=20211016ubuntu0.20.04.1 \
       wget=1.20.3-1ubuntu1 \
-      xvfb=2:1.20.13-1ubuntu1~20.04.4 \
+      xvfb=2:1.20.13-1ubuntu1~20.04.5 \
       libglfw3=3.3.2-1 \
       libuv1=1.34.2-1ubuntu1.3 \
       libjpeg-turbo8=2.0.3-0ubuntu1.20.04.3 \
@@ -70,8 +70,8 @@ RUN set -ex; \
       libcairo2=1.16.0-4ubuntu1 \
       libgif7=5.1.9-1 \
       libopengl0=1.3.2-1~ubuntu0.20.04.2 \
-      libpixman-1-0=0.38.4-0ubuntu1 \
-      libcurl4=7.68.0-1ubuntu2.14 \
+      libpixman-1-0=0.38.4-0ubuntu2.1 \
+      libcurl4=7.68.0-1ubuntu2.15 \
       librsvg2-2=2.48.2-1 \
       libpango-1.0-0=1.44.7-2ubuntu4; \
       apt-get -y --purge autoremove; \
