@@ -32,7 +32,7 @@ RUN set -ex; \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash; \
+RUN wget -qO- https://deb.nodesource.com/setup_18.x | bash; \
     apt-get install -y nodejs; \
     npm i -g npm@latest; \
     apt-get -y remove wget; \
@@ -80,7 +80,7 @@ RUN set -ex; \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN wget -qO- https://deb.nodesource.com/setup_16.x | bash; \ 
+RUN wget -qO- https://deb.nodesource.com/setup_18.x | bash; \ 
     apt-get install -y nodejs; \
     npm i -g npm@latest; \
     apt-get -y remove wget; \

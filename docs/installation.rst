@@ -60,7 +60,7 @@ Alternatively, you can use ``@acalcutt/tileserver-gl-light`` package instead, wh
 From source
 ===========
 
-Make sure you have Node v14.13.0+ and run::
+Make sure you have Node v18 (nvm install 18) and run::
 
   npm install
   node .
