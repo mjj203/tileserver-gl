@@ -92,7 +92,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and publish Full Version to Docker Hub
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: true
@@ -115,7 +115,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN  }}
 
       - name: Build and publish Light Version to Docker Hub
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ./light
           file: ./light/Dockerfile
