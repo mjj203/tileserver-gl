@@ -1,10 +1,6 @@
 # MapLibre TileServer GL
-[![Build Status](https://travis-ci.org/wifidb/tileserver-gl.svg?branch=master)](https://travis-ci.org/wifidb/tileserver-gl)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/acalcutt/tileserver-gl/pipeline.yml)](https://github.com/acalcutt/tileserver-gl/actions/workflows/pipeline.yml)
 [![Docker Hub](https://img.shields.io/badge/docker-hub-blue.svg)](https://hub.docker.com/r/wifidb/tileserver-gl/)
-
-Vector and raster maps with GL styles. Server side rendering by MapLibre GL Native. Map tile server for MapLibre GL JS, Android, iOS, Leaflet, OpenLayers, GIS via WMTS, etc.
-
-## Getting Started with Node
 
 Vector and raster maps with GL styles. Server-side rendering by MapLibre GL Native. Map tile server for MapLibre GL JS, Android, iOS, Leaflet, OpenLayers, GIS via WMTS, etc.
 

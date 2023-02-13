@@ -1,6 +1,6 @@
-name: "Build, Test, Release"
+name: 'Build, Test, Release'
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       version:
@@ -18,7 +18,7 @@ on:
 
 jobs:
   release:
-    name: "Build, Test, Release"
+    name: 'Build, Test, Publish'
     runs-on: ubuntu-20.04
 
     steps:
@@ -98,6 +98,9 @@ jobs:
           push: true
           tags: wifidb/tileserver-gl:latest, wifidb/tileserver-gl:${{env.NPM_VERSION}}
           platforms: linux/arm64,linux/amd64
+          # experimental: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#cache-backend-api
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Create Tileserver Light Directory
         run: node publish.js --no-publish
@@ -122,3 +125,6 @@ jobs:
           push: true
           tags: wifidb/tileserver-gl-light:latest, wifidb/tileserver-gl-light:${{env.NPM_VERSION}}
           platforms: linux/arm64,linux/amd64
+          # experimental: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#cache-backend-api
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
