@@ -13,7 +13,7 @@ import Color from 'color';
 import express from 'express';
 import sanitize from 'sanitize-filename';
 import SphericalMercator from '@mapbox/sphericalmercator';
-import mlgl from '@maplibre/maplibre-gl-native';
+import mlgl from '@acalcutt/maplibre-gl-native';
 import MBTiles from '@mapbox/mbtiles';
 import polyline from '@mapbox/polyline';
 import proj4 from 'proj4';
