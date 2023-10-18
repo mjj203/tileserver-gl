@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import request from 'request';
+import axios from 'axios';
 import { server } from './server.js';
 
 import MBTiles from '@mapbox/mbtiles';
@@ -191,11 +191,20 @@ fs.stat(path.resolve(opts.config), (err, stats) => {
         const url =
           'https://github.com/acalcutt/tileserver-gl/releases/download/test_data/zurich_switzerland.mbtiles';
         const filename = 'zurich_switzerland.mbtiles';
-        const stream = fs.createWriteStream(filename);
+        const writer = fs.createWriteStream(filename);
         console.log(`No MBTiles found`);
         console.log(`[DEMO] Downloading sample data (${filename}) from ${url}`);
-        stream.on('finish', () => startWithMBTiles(filename));
-        return request.get(url).pipe(stream);
+        axios({
+          url,
+          method: 'GET',
+          responseType: 'stream'
+        }).then(response => {
+          response.data.pipe(writer);
+          writer.on('finish', () => startWithMBTiles(filename));
+          writer.on('error', err => console.error(`Error writing file: ${err}`));
+        }).catch(error => {
+          console.error(`Error downloading file: ${error}`);
+        });
       }
     }
     if (mbtiles) {
