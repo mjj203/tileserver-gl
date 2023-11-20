@@ -31,12 +31,12 @@ RUN set -ex; \
       librsvg2-2 \
       librsvg2-common \
       libcurl4-openssl-dev \
-      libpixman-1-0 \
+      libpixman-1-0 lzma lzma-dev \
       libpixman-1-dev; \
     mkdir -p /usr/src/app; \
     mkdir -p /etc/apt/keyrings; \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list; \
     apt-get update && apt-get install -y nodejs; \
     curl http://archive.ubuntu.com/ubuntu/pool/main/t/tzdata/tzdata_2019c-3ubuntu1_all.deb --output tzdata_2019c-3ubuntu1_all.deb \
     && curl http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2.1_amd64.deb --output libicu66_66.1-2ubuntu2.1_amd64.deb \
@@ -86,12 +86,12 @@ RUN groupadd --gid 1001 node \
       libopengl0 \
       libpixman-1-0 \
       libcurl4 \
-      librsvg2-2 \
+      librsvg2-2 lzma \
       libpango1.0; \
     update-ca-certificates; \
     mkdir -p /etc/apt/keyrings; \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list; \
     apt-get update && apt-get install -y nodejs; \
     npm install -g npm; \
     setcap 'cap_net_bind_service=+ep' /usr/bin/node \
