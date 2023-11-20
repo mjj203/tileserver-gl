@@ -16,7 +16,6 @@ Contents:
    config
    deployment
    endpoints
-   troubleshoot
 
 
 

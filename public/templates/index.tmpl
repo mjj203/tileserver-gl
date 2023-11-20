@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maplibre TileServer GL - Server for vector and raster maps with GL styles</title>
+  <title>TileServer GL - Server for vector and raster maps with GL styles</title>
   <link rel="stylesheet" type="text/css" href="{{public_url}}index.css{{&key_query}}" />
   <script>
     function toggle_xyz(id) {
@@ -17,7 +17,7 @@
 </head>
 <body>
   <section>
-    <h1 class="title {{#if is_light}}light{{/if}}"><img src="{{public_url}}images/logo.png" alt="TileServer GL" /></h1>
+    <h1 class="title {{#if is_light}}light{{/if}}"><img src="{{public_url}}images/logo.png{{&key_query}}" alt="TileServer GL" /></h1>
     <h2 class="subtitle">Vector {{#if is_light}}<s>and raster</s>{{else}}and raster{{/if}} maps with GL styles</h2>
     {{#if styles}}
       <h2 class="box-header">Styles</h2>
@@ -27,7 +27,7 @@
           {{#if thumbnail}}
             <img src="{{public_url}}styles/{{@key}}/{{thumbnail}}{{&../key_query}}" alt="{{name}} preview" />
           {{else}}
-            <img src="{{public_url}}images/placeholder.png" alt="{{name}} preview" />
+            <img src="{{public_url}}images/placeholder.png{{&key_query}}" alt="{{name}} preview" />
           {{/if}}
           <div class="details">
             <h3>{{name}}</h3>
@@ -74,11 +74,12 @@
           {{#if thumbnail}}
             <img src="{{public_url}}data/{{@key}}/{{thumbnail}}{{&../key_query}}" alt="{{name}} preview" />
           {{else}}
-            <img src="{{public_url}}images/placeholder.png" alt="{{name}} preview" />
+            <img src="{{public_url}}images/placeholder.png{{&key_query}}" alt="{{name}} preview" />
           {{/if}}
           <div class="details">
-            <h3>{{name}}</h3>
-            <p class="identifier">identifier: {{@key}}{{#if formatted_filesize}} | size: {{formatted_filesize}}{{/if}} | type: {{#is_vector}}vector{{/is_vector}}{{^is_vector}}raster{{/is_vector}} data</p>
+            <h3>{{tileJSON.name}}</h3>
+            <div class="identifier">identifier: {{@key}}{{#if formatted_filesize}} | size: {{formatted_filesize}}{{/if}}</div>
+            <div class="identifier">type: {{#is_vector}}vector{{/is_vector}}{{^is_vector}}raster{{/is_vector}} data {{#if source_type}} | ext: {{source_type}}{{/if}}</div>
             <p class="services">
               services: <a href="{{public_url}}data/{{@key}}.json{{&../key_query}}">TileJSON</a>
               {{#if wmts_link}}
@@ -104,8 +105,9 @@
     {{/if}}
   </section>
   <footer>
+    <a href="https://www.maptiler.com/" target="_blank"><img src="{{public_url}}images/maptiler-logo.svg{{&key_query}}" /></a>
     <p>
-      <a href="https://github.com/acalcutt/tileserver-gl" target="_blank">Powered by Maplibre TileServer GL ({{server_version}})</a>
+      <a href="https://github.com/maptiler/tileserver-gl" target="_blank">Powered by TileServer GL ({{server_version}})</a> – <a href="https://www.maptiler.com/" target="_blank">an open-source project from MapTiler.</a>
     </p>
   </footer>
 </body>
