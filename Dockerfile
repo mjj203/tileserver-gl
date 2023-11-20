@@ -1,4 +1,4 @@
-FROM ubuntu:22.10 AS builder
+FROM ubuntu:22.04 AS builder
 
 ENV NODE_ENV="production"
 
@@ -8,7 +8,7 @@ RUN set -ex; \
     && apt-get upgrade -y \
     && apt-get -y --no-install-recommends install \
       apt-transport-https \
-      curl \
+      curl gnupg \
       unzip \
       build-essential \
       ca-certificates \
@@ -33,9 +33,11 @@ RUN set -ex; \
       libcurl4-openssl-dev \
       libpixman-1-0 \
       libpixman-1-dev; \
-    wget -qO- https://deb.nodesource.com/setup_18.x | bash; \
-    apt-get install -y nodejs; \
-    apt-get -y remove wget; \
+    mkdir -p /usr/src/app; \
+    mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list; \
+    apt-get update && apt-get install -y nodejs; \
     curl http://archive.ubuntu.com/ubuntu/pool/main/t/tzdata/tzdata_2019c-3ubuntu1_all.deb --output tzdata_2019c-3ubuntu1_all.deb \
     && curl http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2.1_amd64.deb --output libicu66_66.1-2ubuntu2.1_amd64.deb \
     && apt install ./tzdata_2019c-3ubuntu1_all.deb \
@@ -46,12 +48,11 @@ RUN set -ex; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*;
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install -g npm && npm install --omit=dev
 
-FROM ubuntu:22.10 AS final
+FROM ubuntu:22.04 AS final
 
 ENV \
     NODE_ENV="production" \
@@ -66,7 +67,7 @@ RUN groupadd --gid 1001 node \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get -qq update && apt-get upgrade -y; \
     apt-get -y --no-install-recommends install \
-      ca-certificates \
+      ca-certificates curl gnupg \
       libgles2-mesa \
       libegl1 \
       wget \
@@ -88,8 +89,10 @@ RUN groupadd --gid 1001 node \
       librsvg2-2 \
       libpango1.0; \
     update-ca-certificates; \
-    wget -qO- https://deb.nodesource.com/setup_18.x | bash; \
-    apt-get install -y nodejs; \
+    mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list; \
+    apt-get update && apt-get install -y nodejs; \
     npm install -g npm; \
     setcap 'cap_net_bind_service=+ep' /usr/bin/node \
     && curl http://archive.ubuntu.com/ubuntu/pool/main/t/tzdata/tzdata_2019c-3ubuntu1_all.deb --output tzdata_2019c-3ubuntu1_all.deb \
