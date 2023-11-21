@@ -43,7 +43,6 @@ const convertBBoxToEPSG3395 = (bbox) => {
   const upperRight = proj4('EPSG:4326', EPSG3395, [maxX, maxY]);
   return [lowerLeft[0], lowerLeft[1], upperRight[0], upperRight[1]];
 };
-const centerEPSG3395 = [(bbox_[0] + bbox_[2]) / 2, (bbox_[1] + bbox_[3]) / 2];
 
 
 const getScale = (scale) => (scale || '@1x').slice(1, 2) | 0;
@@ -1157,6 +1156,7 @@ export const serve_rendered = {
             }
 
             const bbox_ = convertBBoxToEPSG3395(bbox);
+            const centerEPSG3395 = [(bbox_[0] + bbox_[2]) / 2, (bbox_[1] + bbox_[3]) / 2];
             const center = proj4(EPSG3395, 'EPSG:4326', centerEPSG3395);
 
             // Calculate zoom level
