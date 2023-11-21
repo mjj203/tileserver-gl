@@ -8,3 +8,6 @@ config.json
 *.mbtiles
 *.code-workspace
 .vs*
+.trunk*
+.DS_Store
+*/.DS_Store

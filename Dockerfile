@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:23.04 AS builder
 
 ENV NODE_ENV="production"
 
@@ -52,7 +52,7 @@ WORKDIR /usr/src/app
 COPY . .
 RUN npm install -g npm && npm install --omit=dev
 
-FROM ubuntu:22.04 AS final
+FROM ubuntu:23.04 AS final
 
 ENV \
     NODE_ENV="production" \
@@ -108,7 +108,13 @@ RUN groupadd --gid 1001 node \
 
 COPY --from=builder /usr/src/app /usr/src/app
 
-RUN mkdir -p /data && chown 1001:1001 /data && chown -R 1001:1001 /usr/src/app
+RUN mkdir -p /data \
+  && chown 1001:1001 -R /data \
+  && chown -R 1001:1001 /usr/src/app \
+  && chmod +x /usr/src/app/docker-entrypoint.sh \
+  && chmod +x /usr/bin/node \
+  && chown 1001:0 -R /usr/bin
+
 VOLUME /data
 WORKDIR /data
 
