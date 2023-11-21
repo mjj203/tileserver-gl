@@ -12,6 +12,7 @@ import clone from 'clone';
 import Color from 'color';
 import express from 'express';
 import sanitize from 'sanitize-filename';
+import SphericalMercator from '@mapbox/sphericalmercator';
 import mlgl from '@maplibre/maplibre-gl-native';
 import MBTiles from '@mapbox/mbtiles';
 import polyline from '@mapbox/polyline';
@@ -34,17 +35,7 @@ const PATH_PATTERN =
   /^((fill|stroke|width)\:[^\|]+\|)*(enc:.+|-?\d+(\.\d*)?,-?\d+(\.\d*)?(\|-?\d+(\.\d*)?,-?\d+(\.\d*)?)+)/;
 const httpTester = /^(http(s)?:)?\/\//;
 
-const EPSG3395 = '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs';
-const toEPSG3395 = (lon, lat) => proj4('EPSG:4326', EPSG3395, [lon, lat]);
-const fromEPSG3395 = (x, y) => proj4(EPSG3395, 'EPSG:4326', [x, y]);
-const convertBBoxToEPSG3395 = (bbox) => {
-  const [minX, minY, maxX, maxY] = bbox;
-  const lowerLeft = proj4('EPSG:4326', EPSG3395, [minX, minY]);
-  const upperRight = proj4('EPSG:4326', EPSG3395, [maxX, maxY]);
-  return [lowerLeft[0], lowerLeft[1], upperRight[0], upperRight[1]];
-};
-
-
+const mercator = new SphericalMercator();
 const getScale = (scale) => (scale || '@1x').slice(1, 2) | 0;
 
 mlgl.on('message', (e) => {
@@ -345,7 +336,7 @@ const extractMarkersFromQuery = (query, options, transformer) => {
  * @param {number} zoom Map zoom level.
  */
 const precisePx = (ll, zoom) => {
-  const px = toEPSG3395(ll, 20);
+  const px = mercator.px(ll, 20);
   const scale = Math.pow(2, zoom - 20);
   return [px[0] * scale, px[1] * scale];
 };
@@ -601,8 +592,8 @@ const calcZForBBox = (bbox, w, h, query) => {
 
   const padding = query.padding !== undefined ? parseFloat(query.padding) : 0.1;
 
-  const minCorner = toEPSG3395([bbox[0], bbox[3]], z);
-  const maxCorner = toEPSG3395([bbox[2], bbox[1]], z);
+  const minCorner = mercator.px([bbox[0], bbox[3]], z);
+  const maxCorner = mercator.px([bbox[2], bbox[1]], z);
   const w_ = w / (1 + 2 * padding);
   const h_ = h / (1 + 2 * padding);
 
@@ -756,7 +747,7 @@ export const serve_rendered = {
           });
 
           if (z > 2 && tileMargin > 0) {
-            const [_, y] = toEPSG3395(params.center, z);
+            const [_, y] = mercator.px(params.center, z);
             let yoffset = Math.max(
               Math.min(0, y - 128 - tileMargin),
               y + 128 + tileMargin - Math.pow(2, z + 8),
@@ -881,7 +872,7 @@ export const serve_rendered = {
           return res.status(404).send('Out of bounds');
         }
         const tileSize = 256;
-        const tileCenter = fromEPSG3395(
+        const tileCenter = mercator.ll(
           [
             ((x + 0.5) / (1 << z)) * (256 << z),
             ((y + 0.5) / (1 << z)) * (256 << z),
@@ -941,14 +932,14 @@ export const serve_rendered = {
             }
 
             const transformer = raw
-              ? (coords) => proj4(EPSG3395, 'EPSG:4326', coords)
+              ? mercator.inverse.bind(mercator)
               : item.dataProjWGStoInternalWGS;
 
-              if (transformer) {
-                const ll = transformer([x, y]);
-                x = ll[0];
-                y = ll[1];
-              }
+            if (transformer) {
+              const ll = transformer([x, y]);
+              x = ll[0];
+              y = ll[1];
+            }
 
             const paths = extractPathsFromQuery(req.query, transformer);
             const markers = extractMarkersFromQuery(
@@ -1008,7 +999,7 @@ export const serve_rendered = {
           let center = [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2];
 
           const transformer = raw
-            ? (coords) => proj4('EPSG:3395', 'EPSG:4326', coords)
+            ? mercator.inverse.bind(mercator)
             : item.dataProjWGStoInternalWGS;
 
           if (transformer) {
@@ -1123,7 +1114,7 @@ export const serve_rendered = {
             const format = req.params.format;
 
             const transformer = raw
-              ? (coords) => proj4(EPSG3395, 'EPSG:4326', coords)
+              ? mercator.inverse.bind(mercator)
               : item.dataProjWGStoInternalWGS;
 
             const paths = extractPathsFromQuery(req.query, transformer);
@@ -1155,9 +1146,11 @@ export const serve_rendered = {
               bbox[3] = Math.max(bbox[3], pair[1]);
             }
 
-            const bbox_ = convertBBoxToEPSG3395(bbox);
-            const centerEPSG3395 = [(bbox_[0] + bbox_[2]) / 2, (bbox_[1] + bbox_[3]) / 2];
-            const center = proj4(EPSG3395, 'EPSG:4326', centerEPSG3395);
+            const bbox_ = mercator.convert(bbox, '3395');
+            const center = mercator.inverse([
+              (bbox_[0] + bbox_[2]) / 2,
+              (bbox_[1] + bbox_[3]) / 2,
+            ]);
 
             // Calculate zoom level
             const maxZoom = parseFloat(req.query.maxzoom);
@@ -1517,7 +1510,7 @@ export const serve_rendered = {
 
           if (!repoobj.dataProjWGStoInternalWGS && metadata.proj4) {
             // how to do this for multiple sources with different proj4 defs?
-            const to3395 = proj4(EPSG3395);
+            const to3395 = proj4('EPSG:3395');
             const toDataProj = proj4(metadata.proj4);
             repoobj.dataProjWGStoInternalWGS = (xy) =>
               to3395.inverse(toDataProj.forward(xy));
@@ -1562,7 +1555,7 @@ export const serve_rendered = {
 
                   if (!repoobj.dataProjWGStoInternalWGS && info.proj4) {
                     // how to do this for multiple sources with different proj4 defs?
-                    const to3395 = proj4(EPSG3395);
+                    const to3395 = proj4('EPSG:3395');
                     const toDataProj = proj4(info.proj4);
                     repoobj.dataProjWGStoInternalWGS = (xy) =>
                       to3395.inverse(toDataProj.forward(xy));
