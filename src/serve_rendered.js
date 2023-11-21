@@ -1009,7 +1009,7 @@ export const serve_rendered = {
           let center = [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2];
 
           const transformer = raw
-            ? (coords) => proj4(EPSG:3395, 'EPSG:4326', coords)
+            ? (coords) => proj4('EPSG:3395', 'EPSG:4326', coords)
             : item.dataProjWGStoInternalWGS;
 
           if (transformer) {
