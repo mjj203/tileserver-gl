@@ -66,19 +66,14 @@
           crs: L.CRS.EPSG3395,
           continuousWorld: true,
           worldCopyJump: false
-        });
-        var gl = L.maplibreGL({
-          style: '{{public_url}}styles/{{id}}/style.json' + keyParam
+      });
+      var gl = L.maplibreGL({
+          style: '{{public_url}}styles/{{id}}/style.json' + keyParam,
+          hash: true,
+          maplibreLogo: true
       }).addTo(map);
-      map.addControl(new maplibregl.NavigationControl({
-         visualizePitch: true,
-         showZoom: true,
-         showCompass: true
-      }));
-      map.addControl(new MaplibreInspect({
-         showMapPopupOnHover: false,
-         showInspectMapPopupOnHover: false,
-         selectThreshold: 5
+      map.addControl(new L.Control.Zoom({
+          position: 'topright'
       }));
     } else {
         var map = L.map('map', {
