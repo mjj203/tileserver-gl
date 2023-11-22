@@ -12,6 +12,7 @@
   <script src="{{public_url}}leaflet.js{{&key_query}}"></script>
   <script src="{{public_url}}leaflet-hash.js{{&key_query}}"></script>
   <script src="{{public_url}}L.TileLayer.NoGap.js{{&key_query}}"></script>
+  <script src="{{public_url}}leaflet-maplibre-gl.js{{&key_query}}"></script>
   <style>
     body { margin:0; padding:0; }
     #map { position:absolute; top:0; bottom:0; width:100%; }
@@ -60,13 +61,19 @@
 
     if (preference == 'vector') {
       maplibregl.setRTLTextPlugin('{{public_url}}mapbox-gl-rtl-text.js' + keyParam);
-      var map = new maplibregl.Map({
-        container: 'map',
-        style: '{{public_url}}styles/{{id}}/style.json' + keyParam,
-        hash: true,
-        maplibreLogo: true,
-        maxPitch: 85
-      });
+      var map = L.map('map', {
+          zoomControl: false,
+          crs: L.CRS.EPSG3395,
+          continuousWorld: true,
+          worldCopyJump: false
+        });
+        var gl = L.maplibreGL({
+          container: 'map',
+          style: '{{public_url}}styles/{{id}}/style.json' + keyParam,
+          hash: true,
+          maplibreLogo: true,
+          maxPitch: 85
+      }).addTo(map);
       map.addControl(new maplibregl.NavigationControl({
          visualizePitch: true,
          showZoom: true,
