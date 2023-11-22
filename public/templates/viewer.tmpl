@@ -68,11 +68,7 @@
           worldCopyJump: false
         });
         var gl = L.maplibreGL({
-          container: 'map',
-          style: '{{public_url}}styles/{{id}}/style.json' + keyParam,
-          hash: true,
-          maplibreLogo: true,
-          maxPitch: 85
+          style: '{{public_url}}styles/{{id}}/style.json' + keyParam
       }).addTo(map);
       map.addControl(new maplibregl.NavigationControl({
          visualizePitch: true,
